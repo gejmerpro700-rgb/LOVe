@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Когда-то</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: #f5f5f5;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 25%,
+            rgba(255,255,255,0.075),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 15% 80%,
+            rgba(255,255,255,0.025),
+            transparent 30%
+        );
+}
+
+.noise {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+
+    opacity: 0.035;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* МУЗЫКА */
+
+.music-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    z-index: 30;
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 50%;
+    border: 1px solid #333;
+
+    background: rgba(0,0,0,0.65);
+
+    color: #777;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(12px);
+
+    transition:
+        color .3s ease,
+        border-color .3s ease,
+        transform .3s ease;
+}
+
+.music-button:hover {
+    transform: scale(1.08);
+}
+
+.music-button.playing {
+    color: #fff;
+    border-color: #777;
+}
+
+/* СЕКЦИИ */
+
+section {
+    min-height: 100vh;
+
+    padding: 90px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.content {
+    width: 100%;
+    max-width: 760px;
+}
+
+/* HERO */
+
+.hero {
+    position: relative;
+}
+
+.label {
+    margin-bottom: 30px;
+
+    color: #555;
+
+    font-size: 10px;
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+}
+
+.hero-title {
+    margin: 0;
+
+    font-size: clamp(65px, 18vw, 155px);
+
+    line-height: .82;
+
+    letter-spacing: -8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #777777 100%
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+.hero-description {
+    max-width: 500px;
+
+    margin: 38px auto 0;
+
+    color: #888;
+
+    font-size: 16px;
+
+    line-height: 1.9;
+}
+
+.scroll-hint {
+    position: absolute;
+
+    bottom: 30px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    color: #444;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    animation: floating 2s ease-in-out infinite;
+}
+
+@keyframes floating {
+
+    0%, 100% {
+        transform: translate(-50%, 0);
+    }
+
+    50% {
+        transform: translate(-50%, 8px);
+    }
+}
+
+/* ТЕКСТ */
+
+.number {
+    margin-bottom: 25px;
+
+    color: #444;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+}
+
+h2 {
+    margin: 0 0 35px;
+
+    font-size: clamp(38px, 9vw, 75px);
+
+    line-height: 1;
+
+    letter-spacing: -3px;
+}
+
+.text {
+    color: #888;
+
+    font-size: 17px;
+
+    line-height: 2;
+}
+
+.text p {
+    margin: 0 0 25px;
+}
+
+/* ЦИТАТЫ */
+
+.quote-section {
+    min-height: 90vh;
+}
+
+.quote {
+    max-width: 820px;
+
+    margin: auto;
+
+    font-size: clamp(28px, 7vw, 58px);
+
+    line-height: 1.35;
+
+    letter-spacing: -2px;
+
+    color: #eee;
+}
+
+/* РАЗДЕЛИТЕЛЬ */
+
+.divider {
+    width: 60px;
+    height: 1px;
+
+    margin: 45px auto;
+
+    background: #444;
+}
+
+/* ФИНАЛ */
+
+.final {
+    position: relative;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #111111,
+            #030303 65%
+        );
+}
+
+.final-title {
+    margin: 0;
+
+    font-size: clamp(48px, 12vw, 105px);
+
+    line-height: .9;
+
+    letter-spacing: -6px;
+}
+
+.final-text {
+    margin-top: 40px;
+
+    color: #777;
+
+    font-size: 16px;
+
+    line-height: 2;
+}
+
+.last-line {
+    margin-top: 65px;
+
+    font-size: clamp(30px, 7vw, 56px);
+
+    line-height: 1.35;
+
+    color: #fff;
+
+    letter-spacing: -1px;
+}
+
+/* ПОЯВЛЕНИЕ */
+
+.reveal {
+    opacity: 0;
+
+    transform: translateY(40px);
+
+    transition:
+        opacity 1.3s ease,
+        transform 1.3s ease;
+}
+
+.reveal.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+/* МОБИЛЬНЫЕ */
+
+@media (max-width: 600px) {
+
+    section {
+        padding: 80px 22px;
+    }
+
+    .hero-title {
+        letter-spacing: -6px;
+    }
+
+    h2 {
+        letter-spacing: -2px;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+
+    .quote {
+        letter-spacing: -1px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="noise"></div>
+
+
+<!-- КНОПКА МУЗЫКИ -->
+
+<button
+    class="music-button"
+    id="musicButton"
+    aria-label="Музыка"
+>
+    ♪
+</button>
+
+
+<!-- MUSICC1 -->
+
+<audio
+    id="music"
+    loop
+    preload="auto"
+>
+    <source
+        src="musicc1.m4a"
+        type="audio/mp4"
+    >
+
+    Ваш браузер не поддерживает аудио.
+</audio>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="content reveal">
+
+        <div class="label">
+            одна история
+        </div>
+
+        <h1 class="hero-title">
+            Когда-то
+        </h1>
+
+        <div class="hero-description">
+            Было время, когда мне хотелось
+            сохранить каждый момент.
+        </div>
+
+    </div>
+
+    <div class="scroll-hint">
+        листай
+    </div>
+
+</section>
+
+
+<!-- 01 -->
+
+<section>
+
+    <div class="content reveal">
+
+        <div class="number">
+            01
+        </div>
+
+        <h2>
+            Начало
+        </h2>
+
+        <div class="text">
+
+            <p>
+                Когда всё только начиналось,
+                я действительно верил,
+                что это может быть чем-то особенным.
+            </p>
+
+            <p>
+                Мне хотелось быть рядом.
+                Хотелось рассказывать тебе всё.
+                Хотелось знать, что у нас есть
+                что-то настоящее.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- 02 -->
+
+<section>
+
+    <div class="content reveal">
+
+        <div class="number">
+            02
+        </div>
+
+        <h2>
+            Я помню
+        </h2>
+
+        <div class="text">
+
+            <p>
+                Я помню, как радовался
+                самым обычным сообщениям.
+            </p>
+
+            <p>
+                Как ждал встречи.
+                Как мог часами думать
+                о каких-то мелочах.
+            </p>
+
+            <p>
+                Тогда всё казалось
+                намного проще.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ЦИТАТА -->
+
+<section class="quote-section">
+
+    <div class="quote reveal">
+
+        «Иногда мы понимаем ценность
+        какого-то периода только тогда,
+        когда он уже закончился.»
+
+    </div>
+
+</section>
+
+
+<!-- 03 -->
+
+<section>
+
+    <div class="content reveal">
+
+        <div class="number">
+            03
+        </div>
+
+        <h2>
+            Потом всё изменилось
+        </h2>
+
+        <div class="text">
+
+            <p>
+                Появились ссоры.
+                Непонимание.
+                Молчание.
+            </p>
+
+            <p>
+                Я начал всё чаще думать,
+                правильно ли я себя веду.
+            </p>
+
+            <p>
+                Иногда мне казалось,
+                что достаточно просто
+                немного сильнее постараться.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- 04 -->
+
+<section>
+
+    <div class="content reveal">
+
+        <div class="number">
+            04
+        </div>
+
+        <h2>
+            Я пытался
+        </h2>
+
+        <div class="text">
+
+            <p>
+                Разговаривать.
+            </p>
+
+            <p>
+                Объяснять, что мне больно.
+            </p>
+
+            <p>
+                Понимать тебя,
+                даже когда сам чувствовал,
+                что меня уже не пытаются понять.
+            </p>
+
+            <div class="divider"></div>
+
+            <p>
+                Наверное, я слишком долго
+                верил, что всё можно вернуть
+                в то состояние, с которого
+                мы начинали.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- 05 -->
+
+<section class="quote-section">
+
+    <div class="quote reveal">
+
+        «Я хотел сохранить отношения,
+        потому что помнил,
+        какими они были в начале.»
+
+    </div>
+
+</section>
+
+
+<!-- ФИНАЛ -->
+
+<section class="final">
+
+    <div class="content reveal">
+
+        <div class="number">
+            ПОСЛЕДНЯЯ СТРАНИЦА
+        </div>
+
+        <h2 class="final-title">
+            Спасибо.
+        </h2>
+
+        <div class="final-text">
+
+            <p>
+                За хорошие моменты.
+            </p>
+
+            <p>
+                За воспоминания.
+            </p>
+
+            <p>
+                За всё, чему эта история
+                меня научила.
+            </p>
+
+        </div>
+
+        <div class="last-line">
+            Не будет никого после.
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =========================
+   ПОЯВЛЕНИЕ
+========================= */
+
+const elements =
+    document.querySelectorAll(".reveal");
+
+const observer =
+    new IntersectionObserver(
+        (entries) => {
+
+            entries.forEach(
+                (entry) => {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target
+                            .classList
+                            .add("show");
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold: 0.15
+        }
+    );
+
+elements.forEach(
+    (element) => {
+
+        observer.observe(element);
+
+    }
+);
+
+
+/* =========================
+   МУЗЫКА
+========================= */
+
+const music =
+    document.getElementById("music");
+
+const musicButton =
+    document.getElementById("musicButton");
+
+musicButton.addEventListener(
+    "click",
+    () => {
+
+        if (music.paused) {
+
+            music.play()
+                .then(() => {
+
+                    musicButton
+                        .classList
+                        .add("playing");
+
+                })
+                .catch(() => {
+
+                    alert(
+                        "Не удалось воспроизвести musicc1.m4a."
+                    );
+
+                });
+
+        } else {
+
+            music.pause();
+
+            musicButton
+                .classList
+                .remove("playing");
+
+        }
+
+    }
+);
+
+music.addEventListener(
+    "pause",
+    () => {
+
+        musicButton
+            .classList
+            .remove("playing");
+
+    }
+);
+
+</script>
+
+</body>
+</html>
